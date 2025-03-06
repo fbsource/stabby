@@ -410,6 +410,13 @@ pub use istable::{Array, End, IStable};
 /// The heart of `stabby`: the [`IStable`] trait.
 pub mod istable;
 
+#[cfg(not(feature = "proc-macro-crate"))]
+extern crate self as stabby;
+#[cfg(not(feature = "proc-macro-crate"))]
+pub(crate) mod abi {
+    pub(crate) use super::*;
+}
+
 /// Expands to [`unreachable!()`](core::unreachable) in debug builds or if `--cfg stabby_check_unreachable=true` has been set in the `RUST_FLAGS`, and to [`core::hint::unreachable_unchecked`] otherwise.
 ///
 /// This lets the compiler take advantage of the fact that the code is unreachable in release builds, and optimize accordingly, while giving you the opportunity to double check this at runtime in case of doubts.

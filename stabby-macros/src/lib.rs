@@ -50,22 +50,30 @@ macro_rules! log {
 }
 
 pub(crate) fn tl_mod() -> proc_macro2::TokenStream {
-    match proc_macro_crate::crate_name("stabby-abi") {
-        Ok(proc_macro_crate::FoundCrate::Itself) => return quote!(crate),
-        Ok(proc_macro_crate::FoundCrate::Name(crate_name)) => {
-            let crate_name = Ident::new(&crate_name, Span::call_site());
-            return quote!(#crate_name);
-        }
-        _ => {}
-    }
-    match proc_macro_crate::crate_name("stabby")
-        .expect("Couldn't find `stabby` in your dependencies")
+    #[cfg(feature = "proc-macro-crate")]
     {
-        proc_macro_crate::FoundCrate::Itself => quote!(crate::abi),
-        proc_macro_crate::FoundCrate::Name(crate_name) => {
-            let crate_name = Ident::new(&crate_name, Span::call_site());
-            quote!(#crate_name::abi)
+        match proc_macro_crate::crate_name("stabby-abi") {
+            Ok(proc_macro_crate::FoundCrate::Itself) => return quote!(crate),
+            Ok(proc_macro_crate::FoundCrate::Name(crate_name)) => {
+                let crate_name = Ident::new(&crate_name, Span::call_site());
+                return quote!(#crate_name);
+            }
+            _ => {}
         }
+        match proc_macro_crate::crate_name("stabby")
+            .expect("Couldn't find `stabby` in your dependencies")
+        {
+            proc_macro_crate::FoundCrate::Itself => quote!(crate::abi),
+            proc_macro_crate::FoundCrate::Name(crate_name) => {
+                let crate_name = Ident::new(&crate_name, Span::call_site());
+                quote!(#crate_name::abi)
+            }
+        }
+    }
+
+    #[cfg(not(feature = "proc-macro-crate"))]
+    {
+        quote!(stabby::abi)
     }
 }
 

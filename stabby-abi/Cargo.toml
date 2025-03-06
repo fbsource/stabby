@@ -34,6 +34,8 @@ experimental-ctypes = ["stabby-macros/experimental-ctypes"]
 libc = ["dep:libc"]
 test = []
 serde = ["dep:serde"]
+proc-macro-crate = ["stabby-macros/proc-macro-crate"]
+
 
 abi_stable = ["dep:abi_stable"]
 abi_stable-channels = ["abi_stable", "abi_stable/channels"]
